@@ -1,15 +1,18 @@
 (function () {
     class GoodsItem {
-        conctructor(title, price, img, id) {
+        conctructor(title, price, img, id, count) {
             this.title = title;
             this.price = price;
             this.img = img;
+            this.count = count;
+            this.id = id;
         }
 
         render({
             title = 'Unknown Product',
             price = 100500,
             img = 'https://via.placeholder.com/300x457',
+            count,
             id
         }) {
             return `<div class="cell-3 m-b-30 cell-4-m cell-6-sm cell-12-xs">
@@ -22,7 +25,7 @@
                                 <div><span class="product-price fw-700">$${price}</span></div>
                             </div>
                             <div class="cell-12 cell-12-m">
-                                <button type="submit" data-item-add="${id}" class="bttn-reg in-product js-basket c_button w-100" custom-popup-link="dynamic_basket">ADD TO CART</button>
+                                <button type="submit" data-item-add="${id}" data-count="1" class="bttn-reg in-product js-basket c_button w-100" custom-popup-link="dynamic_basket">ADD TO CART</button>
                             </div>
                         </div>
                     </div>`;
@@ -35,49 +38,43 @@
         }
 
         fetchGoods() {
-            this.goods = [
-                {
-                    "title": "The Squad Raglan in Black and White (Black Sleeves)",
-                    "price": 60.00,
-                    "img": "images/products/shirts/1.jpg",
-                    "id": 1
-                }, {
-                    "title": "The D'evils Tee in White",
-                    "price": 15.95,
-                    "img": "images/products/shirts/2.jpg",
-                    "id": 2
-                }, {
-                    "title": "The Ride Or Die Baseball Tee in White & Black",
-                    "price": undefined,
-                    "img": "images/products/shirts/3.jpg",
-                    "id": 3
-                }, {
-                    "title": "The Florio Rosas Graphic Tee in Black",
-                    "price": 14.95,
-                    "img": "images/products/shirts/4.jpg",
-                    "id": 4
-                }, {
-                    "title": undefined,
-                    "price": 67.99,
-                    "img": "images/products/joggers/1.jpg",
-                    "id": 5
-                }, {
-                    "title": "Piped Joggers",
-                    "price": 31.99,
-                    "img": "images/products/joggers/2.jpg",
-                    "id": 6
-                }, {
-                    "title": "Alva Jogger in Black",
-                    "price": 114.99,
-                    "img": "images/products/joggers/3.jpg",
-                    "id": 7
-                }, {
-                    "title": "Phys Ed Jogger in Black",
-                    "price": 99.99,
-                    "img": undefined,
-                    "id": 8
-                }
-            ];
+            let xhr = new XMLHttpRequest();
+
+            function makeGETRequest() {
+                return new Promise((resolve, reject) => {
+                    xhr.open('GET', `${API_URL}products/data.json`, 'true');
+                    xhr.send(null);
+
+                    xhr.onload = function () {
+                        if (xhr.status == 200) {
+                            let response = JSON.parse(xhr.responseText);
+                            resolve(response);
+                        } else {
+                            reject(`Не удалось получить объект с товарами: функция makeGETRequest вернула статус ${xhr.status}`);
+                        }
+                    }
+                });
+            }
+
+            makeGETRequest().then((response) => {
+                response.goods.forEach(good => {
+                    // Меняем пустые значения из JSON (null) на undefined, чтобы наши дефолтные значения параметров при рендеринге отрабатывали как надо (в JSON не бывает undefined)
+                    for (let key in good) {
+                        if (good[key] === null) {
+                            good[key] = undefined;
+                        }
+                    }
+
+                    // Пушим товары в массив
+                    this.goods.push(good);
+                });
+            }).then(() => {
+                // Запускаем рендеринг товаров
+                goodsList.render();
+            }).catch((message) => {
+                // На случай, если сервер не обработает наш запрос
+                console.error(message);
+            });
         }
 
         render() {
@@ -94,7 +91,6 @@
             this.addToCart();
         }
 
-
         // Здесь проверяем клик по кнопке добавления товара в корзину, и если ID кнопки совпадает с ID товара, то пушим этот товар в CartList
         addToCart() {
             const cartList = new CartList();
@@ -102,9 +98,10 @@
             dynamicBasket.render();
 
             document.querySelectorAll('[data-item-add]').forEach(item => {
-                item.addEventListener('click', () => {
+                item.addEventListener('click', (e) => {
+                    let itemID = +e.target.getAttribute('data-item-add');
                     goods.forEach(good => {
-                        if (good.id == item.getAttribute('data-item-add')) {
+                        if (good.id === itemID) {
                             cartList.items.push(good);
                             cartList.render();
                         }
@@ -116,14 +113,16 @@
 
     // Наследуемся от GoodsItem и создаём новый класс для товара добавленного в корзину пишем метод его рендеринга
     class CartItem extends GoodsItem {
-        constructor(title, price, img, id) {
+        constructor(title, price, img, id, count) {
             super(title, price, img, id);
+            this.count = count;
         }
 
         render({
             title = 'Unknown Product',
             price = 100500,
             img = 'https://via.placeholder.com/300x457',
+            count = 1,
             id
         }) {
             return `
@@ -138,6 +137,14 @@
                             <div class="cart-price m-b-5">
                                 <label class="cart-label fw-300">Цена:</label>
                                 <span class="c_special_2_color fw-400" data-change-price="">$${price}</span>
+                            </div>
+                            <div class="cart-quan m-b-5">
+                            <label class="cart-label fw-300 inline-middle">Количество:</label>
+                            <div data-quantity="" class="quantity is-basket inline-middle">
+                              <div class="quantity-controls">
+                                <input class="quantity-input" type="text" data-item-id="${id}" value="${count}">
+                              </div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -211,10 +218,10 @@
         }
     }
 
-    const goodsList = new GoodsList(),
+    const API_URL = 'http://127.0.0.1:62648/',
+        goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket();
     goodsList.fetchGoods();
-    goodsList.render();
 }())
 
 
