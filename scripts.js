@@ -35,6 +35,7 @@
     class GoodsList {
         constructor() {
             this.goods = [];
+            this.filteredGoods = [];
         }
 
         fetchGoods() {
@@ -67,6 +68,7 @@
 
                     // Пушим товары в массив
                     this.goods.push(good);
+                    this.filteredGoods.push(good);
                 });
             }).then(() => {
                 // Запускаем рендеринг товаров
@@ -77,10 +79,17 @@
             });
         }
 
+        filterGoods(value) {
+            // Здесь будем фильтровать список товаров
+            const regexp = new RegExp(value, 'i');
+            this.filteredGoods = this.goods.filter(good => regexp.test(good.title));
+            this.render();
+        }
+
         render() {
             let listHtml = '';
 
-            this.goods.forEach(good => {
+            this.filteredGoods.forEach(good => {
                 const goodItem = new GoodsItem();
                 listHtml += goodItem.render(good);
             });
@@ -95,8 +104,7 @@
         addToCart() {
             const cartList = new CartList();
             let goods = this.goods,
-                goodAdded = false,
-                goodPriceCurrent;
+                goodAdded = false;
             dynamicBasket.render();
 
             document.querySelectorAll('[data-item-add]').forEach(item => {
@@ -207,7 +215,7 @@
         }
     }
 
-    // Здесь перечислены все слушатели событий связанные с управлением корзиной. Долго ломал голову, как тут лучше поступить. Возможно, стоило все события появления корзины оставить в рамках CartList.
+    // Здесь перечислены все слушатели событий связанные с управлением корзиной
     class DynamicBasket {
         constuctor() {
             this.popup = popup;
@@ -242,10 +250,55 @@
         }
     }
 
+    class SearchPopup {
+        costructor() {
+            this.popup = popup;
+            this.buttonClose = buttonClose;
+            this.links = links;
+            this.searchInput = searchInput;
+            this.searchLink = searchLink;
+        }
+
+        render(searchLink) {
+            this.popup = document.querySelector('[custom-popup-modal="search-form"]');
+            this.buttonClose = document.querySelector('[custom-popup-close="search-form"]');
+            this.searchSubmit = document.querySelector('.search_widget button[type="submit"]');
+            this.searchInput = document.querySelector('input[data-search-field]');
+            this.searchLink = document.querySelector('[custom-popup-link="search-form"]');
+
+            this.open = () => {
+                this.popup.classList.add('opened');
+            }
+
+            this.close = () => {
+                this.popup.classList.remove('opened');
+            }
+
+            this.searchLink.addEventListener('click', () => {
+                this.open();
+                this.searchInput.focus();
+            });
+
+            this.buttonClose.addEventListener('click', () => {
+                this.close();
+            })
+
+            this.searchSubmit.addEventListener('click', (e) => {
+                e.preventDefault();
+                const value = this.searchInput.value;
+                goodsList.filterGoods(value);
+                this.close();
+            });
+
+        }
+    }
+
     const API_URL = 'http://127.0.0.1:60694/',
         goodsList = new GoodsList(),
-        dynamicBasket = new DynamicBasket();
+        dynamicBasket = new DynamicBasket(),
+        searchPopup = new SearchPopup();
     goodsList.fetchGoods();
+    searchPopup.render();
 }())
 
 
