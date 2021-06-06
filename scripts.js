@@ -1,8 +1,8 @@
 (function () {
     class GoodsItem {
-        conctructor(title, price, img, id, count) {
+        conctructor(title, salePrice, img, id, count) {
             this.title = title;
-            this.price = price;
+            this.salePrice = salePrice;
             this.img = img;
             this.count = count;
             this.id = id;
@@ -10,7 +10,7 @@
 
         render({
             title = 'Unknown Product',
-            price = 100500,
+            salePrice = 100500,
             img = 'https://via.placeholder.com/300x457',
             count,
             id
@@ -22,7 +22,7 @@
                             </a>
                             <div class="product-item__title text-center">
                                 <a class="fw-400" href="#">${title}</a>
-                                <div><span class="product-price fw-700">$${price}</span></div>
+                                <div><span class="product-price fw-700">$${salePrice}</span></div>
                             </div>
                             <div class="cell-12 cell-12-m">
                                 <button type="submit" data-item-add="${id}" data-count="1" class="bttn-reg in-product js-basket c_button w-100" custom-popup-link="dynamic_basket">ADD TO CART</button>
@@ -94,7 +94,9 @@
         // Здесь проверяем клик по кнопке добавления товара в корзину, и если ID кнопки совпадает с ID товара, то пушим этот товар в CartList
         addToCart() {
             const cartList = new CartList();
-            let goods = this.goods;
+            let goods = this.goods,
+                goodAdded = false,
+                goodPriceCurrent;
             dynamicBasket.render();
 
             document.querySelectorAll('[data-item-add]').forEach(item => {
@@ -102,8 +104,26 @@
                     let itemID = +e.target.getAttribute('data-item-add');
                     goods.forEach(good => {
                         if (good.id === itemID) {
-                            cartList.items.push(good);
-                            cartList.render();
+                            // Проверяем, присутствует ли товар в корзине
+                            cartList.items.forEach(cartItem => {
+                                if (good.id === cartItem.id) {
+                                    // Если да, то присваем переменной true
+                                    goodAdded = true;
+                                } else {
+                                    // Если нет, то false
+                                    goodAdded = false;
+                                }
+                            })
+
+                            // Пушим товар в массив, если он ещё не был добавлен 
+                            if (!goodAdded) {
+                                cartList.items.push(good);
+                                cartList.render();
+                                // Если уже добавлен, то просто добавляем количество и рендерим корзину, чтобы оно обновилось
+                            } else {
+                                good.count++;
+                                cartList.render();
+                            }
                         }
                     });
                 });
@@ -113,16 +133,18 @@
 
     // Наследуемся от GoodsItem и создаём новый класс для товара добавленного в корзину пишем метод его рендеринга
     class CartItem extends GoodsItem {
-        constructor(title, price, img, id, count) {
-            super(title, price, img, id);
+        constructor(title, salePrice, img, id, count, cartPrice) {
+            super(title, salePrice, img, id);
             this.count = count;
+            this.cartPrice = cartPrice;
         }
 
         render({
             title = 'Unknown Product',
-            price = 100500,
+            salePrice = 100500,
             img = 'https://via.placeholder.com/300x457',
             count = 1,
+            cartPrice = (salePrice * count),
             id
         }) {
             return `
@@ -136,13 +158,15 @@
 
                             <div class="cart-price m-b-5">
                                 <label class="cart-label fw-300">Цена:</label>
-                                <span class="c_special_2_color fw-400" data-change-price="">$${price}</span>
+                                <span class="c_special_2_color fw-400" data-change-price="">$${(cartPrice).toFixed(2)}</span>
                             </div>
                             <div class="cart-quan m-b-5">
                             <label class="cart-label fw-300 inline-middle">Количество:</label>
                             <div data-quantity="" class="quantity is-basket inline-middle">
                               <div class="quantity-controls">
+                                <button data-quantity-change="-1" class="quantity-control bttn-count">-</button>
                                 <input class="quantity-input" type="text" data-item-id="${id}" value="${count}">
+                                <button data-quantity-change="1" class="quantity - control bttn-count">+</button>
                               </div>
                             </div>
                             </div>
@@ -173,7 +197,7 @@
                 listHtml += cartItem.render(item);
 
                 // Считаем стоимость всех товаров в корзине
-                cartTotal += (!item.price ? 100500 : item.price);
+                cartTotal += ((!item.salePrice ? 100500 : item.salePrice) * item.count);
             });
 
             // Выводим список товаров и их стоимость
@@ -218,7 +242,7 @@
         }
     }
 
-    const API_URL = 'http://127.0.0.1:62648/',
+    const API_URL = 'http://127.0.0.1:60694/',
         goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket();
     goodsList.fetchGoods();

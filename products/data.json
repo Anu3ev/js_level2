@@ -2,49 +2,49 @@
     "goods": [
         {
             "title": "The Squad Raglan in Black and White (Black Sleeves)",
-            "price": 60.00,
+            "salePrice": 60.00,
             "img": "images/products/shirts/1.jpg",
             "id": 1,
             "count": 1
     }, {
             "title": "The D'evils Tee in White",
-            "price": 15.95,
+            "salePrice": 15.95,
             "img": "images/products/shirts/2.jpg",
             "id": 2,
             "count": 1
     }, {
             "title": "The Ride Or Die Baseball Tee in White & Black",
-            "price": null,
+            "salePrice": null,
             "img": "images/products/shirts/3.jpg",
             "id": 3,
             "count": 1
     }, {
             "title": "The Florio Rosas Graphic Tee in Black",
-            "price": 14.95,
+            "salePrice": 14.95,
             "img": "images/products/shirts/4.jpg",
             "id": 4,
             "count": 1
     }, {
             "title": null,
-            "price": 67.99,
+            "salePrice": 67.99,
             "img": "images/products/joggers/1.jpg",
             "id": 5,
             "count": 1
     }, {
             "title": "Piped Joggers",
-            "price": 31.99,
+            "salePrice": 31.99,
             "img": "images/products/joggers/2.jpg",
             "id": 6,
             "count": 1
     }, {
             "title": "Alva Jogger in Black",
-            "price": 114.99,
+            "salePrice": 114.99,
             "img": "images/products/joggers/3.jpg",
             "id": 7,
             "count": 1
     }, {
             "title": "Phys Ed Jogger in Black",
-            "price": 99.99,
+            "salePrice": 99.99,
             "img": null,
             "id": 8,
             "count": 1
