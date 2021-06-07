@@ -33,7 +33,7 @@
                     <div class="header-menu-right row flex-middle flex-end">
 
                         <div>
-                            <a class="search_widget-submit hover-opacity" href="#" custom-popup-link="search-form">
+                            <a custom-popup-link="search-form" class="search_widget-submit hover-opacity" href="#">
                                 <span class="inline-middle">
                                     <!--?xml version="1.0" encoding="iso-8859-1"?-->
                                     <svg fill="currentColor" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 53.627 53.627" style="enable-background:new 0 0 53.627 53.627; width: 1.6em; display: block;" xml:space="preserve">
@@ -218,6 +218,32 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="container m-b-70 m-t-50 pallette_1">
+            <h1 class="h1-like text-center fw-400 m-t-0 m-b-0">Feedback Form</h1>
+
+            <div class="page-content page-feedback">
+                <form id="feedback_form" style="text-align: center;" action="#" method="post">
+                    <table style="width: 650px; padding: 0px 40px;" border="0">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <div id="thanks"></div>
+                                    <p style="line-height: 1.8;"><label>Name:</label> <br><input id="feedback_name" name="feedback[name]" size="30" type="text" required placeholder="Example: Alexander Anufriev"></p>
+                                    <p style="line-height: 1.8;"><label>E-mail:</label><br><input id="feedback_from" name="feedback[from]" size="30" type="text" required placeholder="mymail@gmail.com"></p>
+                                    <p style="line-height: 1.8;"><label>Phone Number:</label> <br><input id="feedback_phone" name="feedback[phone]" size="30" type="tel" required placeholder="+7(000)000-0000"></p>
+                                    <p style="line-height: 1.8;"><label>Your question, review or suggestions:</label><br><textarea id="feedback_content" cols="50" name="feedback[content]" rows="8"></textarea></p>
+                                    <p><small>We will call you back because we need your money :)</small></p>
+                                    <p><input id="feedback_commit" name="commit" type="submit" value="Send"></p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
     </main>
     <footer class="pallette_2 p-t-50">
         <div class="container">
@@ -296,7 +322,7 @@
     </footer>
 
     <div class="cart-popup side-popup transition pallette_1" custom-popup-modal="dynamic_basket">
-        <div class="cart-title h2-like text-center p-b-20">Корзина</div>
+        <div class="cart-title h2-like text-center p-b-20">Shopping Cart</div>
         <div class="cart-items dynamic_basket js-dynamic_basket">
             <a class="button-close dynamic_basket-close" href="#" custom-popup-close="dynamic_basket">
                 <!--?xml version="1.0" encoding="iso-8859-1"?-->
@@ -312,7 +338,7 @@
 
             <div class="b-top b-bottom p-t-15 p-b-15">
                 <div class="dynamic_basket-total row is-grid flex-middle flex-between">
-                    <div class="cell-6 h4-like text-uppercase">Итого</div>
+                    <div class="cell-6 h4-like text-uppercase">Subtotal</div>
                     <div class="basket-total-price cell-6 h4-like fw-700 text-right c_special_2_color" data-cart-total-price=""></div>
                 </div>
             </div>
@@ -336,7 +362,7 @@
         <div class="search-inner absolute content-middle">
             <form class="search_widget">
                 <div class="inpt-group text-center">
-                    <input type="text" autocomplete="off" class="inpt inpt-underline inline-middle" name="q" value="" placeholder="Поиск" data-search-field="" inprocess="false">
+                    <input type="text" autocomplete="off" class="inpt inpt-underline inline-middle" name="q" value="" placeholder="Search" data-search-field="" inprocess="false">
                     <button type="submit" class="bttn-link inline-middle transition">
                         <!--?xml version="1.0" encoding="iso-8859-1"?-->
                         <svg fill="currentColor" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 53.627 53.627" style="enable-background:new 0 0 53.627 53.627; width: 1.6em; display: block;" xml:space="preserve">
@@ -352,7 +378,6 @@
             </form>
         </div>
     </div>
-
 
     <script src="scripts.js"></script>
 </body></html>

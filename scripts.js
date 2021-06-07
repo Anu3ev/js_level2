@@ -115,10 +115,9 @@
                             // Проверяем, присутствует ли товар в корзине
                             cartList.items.forEach(cartItem => {
                                 if (good.id === cartItem.id) {
-                                    // Если да, то присваем переменной true
+                                    // Если да, то присваем переменной goodAdded значение true
                                     goodAdded = true;
                                 } else {
-                                    // Если нет, то false
                                     goodAdded = false;
                                 }
                             })
@@ -127,7 +126,7 @@
                             if (!goodAdded) {
                                 cartList.items.push(good);
                                 cartList.render();
-                                // Если уже добавлен, то просто добавляем количество и рендерим корзину, чтобы оно обновилось
+                                // Если уже добавлен, то прибавляем количество и рендерим корзину, чтобы оно обновилось
                             } else {
                                 good.count++;
                                 cartList.render();
@@ -165,11 +164,11 @@
                             <div class="cart-title text-uppercase m-b-5">${title}</div>
 
                             <div class="cart-price m-b-5">
-                                <label class="cart-label fw-300">Цена:</label>
+                                <label class="cart-label fw-300">Price:</label>
                                 <span class="c_special_2_color fw-400" data-change-price="">$${(cartPrice).toFixed(2)}</span>
                             </div>
                             <div class="cart-quan m-b-5">
-                            <label class="cart-label fw-300 inline-middle">Количество:</label>
+                            <label class="cart-label fw-300 inline-middle">Quantity:</label>
                             <div data-quantity="" class="quantity is-basket inline-middle">
                               <div class="quantity-controls">
                                 <button data-quantity-change="-1" class="quantity-control bttn-count">-</button>
@@ -250,6 +249,7 @@
         }
     }
 
+    // Здесь перечислены все слушатели событий связанные с управлением поиском
     class SearchPopup {
         costructor() {
             this.popup = popup;
@@ -259,7 +259,7 @@
             this.searchLink = searchLink;
         }
 
-        render(searchLink) {
+        render() {
             this.popup = document.querySelector('[custom-popup-modal="search-form"]');
             this.buttonClose = document.querySelector('[custom-popup-close="search-form"]');
             this.searchSubmit = document.querySelector('.search_widget button[type="submit"]');
@@ -293,12 +293,73 @@
         }
     }
 
-    const API_URL = 'http://127.0.0.1:60694/',
+    class Feedback {
+        constructor() {
+            this.form = document.getElementById('feedback_form');
+            this.name = document.getElementById('feedback_name');
+            this.phone = document.getElementById('feedback_phone');
+            this.email = document.getElementById('feedback_from');
+            this.submit = document.getElementById('feedback_commit');
+        }
+
+        validation() {
+            // Заводим переменные
+            const regExpName = /^([А-Яа-яA-Za-z]+)?\s?([А-Яа-яA-Za-z]+)$/i,
+                regExpPhone = /^(\+7|8)\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/i,
+                regExpEmail = /^([A-Za-z0-9\.-]+)@([A-Za-z0-9]+)\.([a-z\.]{2,6})$/i,
+                messages = {
+                    errorEmail: 'Error! Incorrect E-mail!',
+                    errorName: 'Error! Incorrect Name!',
+                    errorPhone: 'Error! Incorrect Phone Number!'
+                }
+
+            // Пишем функцию в которую будем отправлять содержимое наших инпутов на проверку
+            function checkInputValue(input, regExp, errorMessage) {
+                let status,
+                    error = document.createElement('span');
+                error.classList.add('input-error');
+                error.textContent = errorMessage;
+
+                input.addEventListener('change', (e) => {
+                    // Проверяем совпадение с регулярным выражением. Если введённый в поле текст не совпадает с регулярным выражением, то присваем перменной status 0. Если совпадает, то помещаем в переменную status количество символов, которые совпали с регулярным выражением
+                    if (e.target.value.match(regExp) === null) {
+                        status = 0;
+                    } else {
+                        status = e.target.value.match(regExp).input.length;
+                    }
+
+                    // Если количество символов, которое совпало с регуляркой не равно количеству символов введённых в input, то выделяем input красным цветом, и выводим ошибку
+                    if (e.target.value.length !== status) {
+                        e.target.classList.add('b-error');
+                        e.target.parentElement.append(error);
+                    } else {
+                        e.target.classList.remove('b-error');
+                        e.target.parentElement.removeChild(error);
+                    }
+                });
+            }
+
+            // Запускаем проверку полей
+            checkInputValue(this.name, regExpName, messages.errorName);
+            checkInputValue(this.phone, regExpPhone, messages.errorPhone);
+            checkInputValue(this.email, regExpEmail, messages.errorEmail);
+
+            // Так как форму пока некуда отправлять, сбрасываем сабмит
+            this.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+            })
+        }
+    }
+
+
+    const API_URL = 'http://127.0.0.1:62470/',
         goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket(),
-        searchPopup = new SearchPopup();
+        searchPopup = new SearchPopup(),
+        feedback = new Feedback();
     goodsList.fetchGoods();
     searchPopup.render();
+    feedback.validation();
 }())
 
 

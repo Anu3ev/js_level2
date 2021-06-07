@@ -100,3 +100,30 @@
 .product-item__title {
     min-height: 75px;
 }
+
+#feedback_content {
+    max-height: 500px;
+}
+
+#feedback_form table textarea,
+#feedback_form table input[type="tel"] {
+    outline: none;
+    width: 100%;
+    border-radius: 2px;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    padding: 10px;
+    border-width: 1px;
+}
+
+#feedback_form input {
+    transition-duration: 0s !important;
+}
+
+.b-error {
+    -webkit-box-shadow: 0 0 0 30px #ff7b7b inset !important;
+}
+
+.input-error {
+    color: #b70000;
+}
