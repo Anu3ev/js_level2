@@ -293,7 +293,7 @@
         }
     }
 
-    const API_URL = 'http://127.0.0.1:60694/',
+    const API_URL = 'https://anu3ev.com/',
         goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket(),
         searchPopup = new SearchPopup();
