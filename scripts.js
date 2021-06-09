@@ -361,8 +361,3 @@
     searchPopup.render();
     feedback.validation();
 }())
-
-
-/*
-4. Доп задание
-*/
