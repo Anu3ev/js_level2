@@ -313,7 +313,7 @@
                     errorPhone: 'Error! Incorrect Phone Number!'
                 }
 
-            // Пишем функцию в которую будем отправлять содержимое наших инпутов на проверку
+            // Пишем функцию в которую будем отправлять содержимое полей на проверку
             function checkInputValue(input, regExp, errorMessage) {
                 let status,
                     error = document.createElement('span');
@@ -352,7 +352,7 @@
     }
 
 
-    const API_URL = 'http://127.0.0.1:62470/',
+    const API_URL = 'https://anu3ev.com/',
         goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket(),
         searchPopup = new SearchPopup(),
