@@ -293,6 +293,7 @@
         }
     }
 
+<<<<<<< HEAD
     class Feedback {
         constructor() {
             this.form = document.getElementById('feedback_form');
@@ -352,6 +353,8 @@
     }
 
 
+=======
+>>>>>>> master
     const API_URL = 'https://anu3ev.com/',
         goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket(),
