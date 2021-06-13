@@ -1,3 +1,344 @@
+let shopGoodsItem = {
+    props: {
+        good: {
+            title: {
+                type: String,
+                required: true
+            },
+            salePrice: {
+                type: Number,
+                required: true
+            },
+            img: {
+                type: String,
+                required: true
+            },
+            id: {
+                type: Number,
+                required: true
+            }
+        }
+    },
+    template: `
+        <div class="cell-3 m-b-30 cell-4-m cell-6-sm cell-12-xs">
+            <div class="product-item">
+                <a class="product-image square rel-img m-b-20 no-transparent " href="#" data-url="#" :data-prod-title="good.title" data-open-product="">
+                    <img class="transition" :src="good.img">
+                </a>
+                <div class="product-item__title text-center">
+                    <a class="fw-400" href="#">{{ good.title }}</a>
+                    <div><span class="product-price fw-700">\${{ good.salePrice }}</span></div>
+                </div>
+                <div class="cell-12 cell-12-m">
+                    <button type="submit" :data-item-add="good.id" data-count="1" class="bttn-reg in-product js-basket c_button w-100" custom-popup-link="dynamic_basket" @click="$emit('AddToCart', good)">ADD TO CART</button>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+let shopCartItem = {
+    props: {
+        item: {
+            title: {
+                type: String,
+                required: true
+            },
+            cartPrice: {
+                type: Number,
+                required: true
+            },
+            img: {
+                type: String,
+                required: true
+            },
+            id: {
+                type: Number,
+                required: true
+            }
+        }
+    },
+    template: `
+        <div class="cart-item relative b-top p-t-15 p-b-15 is-one" :data-item-id="item.id">
+            <div class="row is-grid flex-middle">
+                <div class="cart-image cell-2 cell-4-s">
+                    <img :src="item.img">
+                </div>
+                <div class="cart-text cell-10 cell-8-s">
+                    <div class="cart-title text-uppercase m-b-5">{{ item.title }}</div>
+
+                    <div class="cart-price m-b-5">
+                        <label class="cart-label fw-300">Price:</label>
+                        <span class="c_special_2_color fw-400" data-change-price="">\${{ item.salePrice.toFixed(2) }}</span>
+                    </div>
+                    <div class="cart-quan m-b-5">
+                    <label class="cart-label fw-300 inline-middle">Quantity:</label>
+                    <div data-quantity="" class="quantity is-basket inline-middle">
+                      <div class="quantity-controls">
+                        <button data-quantity-change="-1" class="quantity-control bttn-count">-</button>
+                        <input class="quantity-input" type="text" :data-item-id="item.id" :value="item.count">
+                        <button data-quantity-change="1" class="quantity - control bttn-count">+</button>
+                      </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+}
+
+let shopCartList = {
+    components: {
+        'shop-cart-item': shopCartItem
+    },
+    props: {
+        cartItems: Array
+    },
+    methods: {
+        /*      render() {
+                    // Заводим переменные
+                    let listHtml = '',
+                        cartTotal = 0;
+                    const dynamicBusketList = document.querySelector('.dynamic_basket-list'),
+                        dynamicBusketTotal = document.querySelector('[data-cart-total-price]');
+
+                    // Перебирем список товаров
+                    this.items.forEach(item => {
+                        // Отправляем товары на рендеринг в CartItem
+                        const cartItem = new CartItem();
+                        listHtml += cartItem.render(item);
+
+                        // Считаем стоимость всех товаров в корзине
+                        cartTotal += ((!item.salePrice ? 100500 : item.salePrice) * item.count);
+                    });
+
+                    // Выводим список товаров и их стоимость
+                    dynamicBusketList.innerHTML = listHtml;
+                    dynamicBusketTotal.setAttribute('data-cart-total-price', cartTotal);
+                    dynamicBusketTotal.innerHTML = `$${cartTotal.toFixed(2)}`;
+                }
+                */
+    },
+    template: `
+        <div class="cart-popup side-popup transition pallette_1 opened" custom-popup-modal="dynamic_basket">
+            <div class="cart-title h2-like text-center p-b-20">Shopping Cart</div>
+            <div class="cart-items dynamic_basket js-dynamic_basket">
+                <a class="button-close dynamic_basket-close" href="#" custom-popup-close="dynamic_basket">
+                    <!--?xml version="1.0" encoding="iso-8859-1"?-->
+                    <svg fill="currentColor" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 224.512 224.512" style="enable-background:new 0 0 224.512 224.512;" xml:space="preserve">
+                        <g>
+                            <polygon fill="currentColor" points="224.507,6.997 217.521,0 112.256,105.258 6.998,0 0.005,6.997 105.263,112.254 
+				0.005,217.512 6.998,224.512 112.256,119.24 217.521,224.512 224.507,217.512 119.249,112.254 	"></polygon>
+                        </g>
+                    </svg>
+                </a>
+
+                <div class="dynamic_basket-list">
+                    <shop-cart-item v-for="item in cartItems" :item="item" :key="item.id"></shop-cart-item>
+                </div>
+
+                <div class="b-top b-bottom p-t-15 p-b-15">
+                    <div class="dynamic_basket-total row is-grid flex-middle flex-between">
+                        <div class="cell-6 h4-like text-uppercase">Subtotal</div>
+                        <div class="basket-total-price cell-6 h4-like fw-700 text-right c_special_2_color" data-cart-total-price=""></div>
+                    </div>
+                </div>
+
+                <div class="basket-footer row is-grid flex-middle p-t-15 p-b-15">
+                </div>
+            </div>
+        </div>
+    `,
+    mounted() {}
+}
+
+let ShopGoodsList = {
+    props: {
+        filteredGoods: {
+            good: {
+                title: {
+                    type: String,
+                    required: true
+                },
+                salePrice: {
+                    type: Number,
+                    required: true
+                },
+                img: {
+                    type: String,
+                    required: true
+                },
+                id: {
+                    type: Number,
+                    required: true
+                }
+            }
+        },
+        cartItems: {
+            item: {
+                title: {
+                    type: String,
+                    required: true
+                },
+                cartPrice: {
+                    type: Number,
+                    required: true
+                },
+                img: {
+                    type: String,
+                    required: true
+                },
+                id: {
+                    type: Number,
+                    required: true
+                }
+            }
+        }
+    },
+    components: {
+        'shop-goods-item': shopGoodsItem,
+        'shop-cart-list': shopCartList
+    },
+    data() {
+        return {}
+    },
+    template: `
+        <div class="pallette_1 goods-list row is-grid flex-center">
+            <shop-goods-item v-for="good in filteredGoods" :good="good" :key="good.id" @AddToCart="onAddToCart"></shop-goods-item>
+        </div>
+    `,
+    methods: {
+        onAddToCart(item) {
+            this.cartItems.push(item);
+        }
+
+        /* addToCart() {
+                let goods = this.filteredGoods,
+                    goodAdded = false;
+                dynamicBasket.render();
+                document.querySelectorAll('[data-item-add]').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        let itemID = +e.target.getAttribute('data-item-add');
+                        goods.forEach(good => {
+                            if (good.id === itemID) {
+                                // Проверяем, присутствует ли товар в корзине
+                                for (let i = 0; cartList.items.length > i; i++) {
+                                    if (good.id === cartList.items[i].id) {
+                                        // Если да, то присваем переменной goodAdded значение true
+                                        goodAdded = true;
+                                    } else {
+                                        goodAdded = false;
+                                    }
+                                }
+                                cartList.items.forEach(cartItem => {
+                                    console.log(goodAdded, good.id, cartItem.id);
+                                    if (good.id === cartItem.id) {
+                                        // Если да, то присваем переменной goodAdded значение true
+                                        goodAdded = true;
+                                    } else {
+                                        goodAdded = false;
+                                    }
+                                })
+                                // Пушим товар в массив, если он ещё не был добавлен 
+                                if (!goodAdded) {
+                                    cartList.items.push(good);
+                                    cartList.render();
+                                    // Если уже добавлен, то прибавляем количество и рендерим корзину, чтобы оно обновилось
+                                } else {
+                                    good.count++;
+                                    cartList.render();
+                                }
+                            }
+                        });
+                    });
+                });
+            },
+            */
+    },
+    mounted() {},
+}
+
+let ShopMain = {
+    template: `
+        <main class="container">
+            <div class="row is-grid flex-middle flex-between">
+                <div class="cell-12 cell-12-sm transition text-center">
+                    <shop-goods-list :filtered-goods="filteredGoods" :cart-items="cartItems"></shop-goods-list>
+                </div>
+            </div>
+            <shop-cart-list :cart-items="cartItems"></shop-cart-list>
+        </main>
+    `,
+    data() {
+        return {
+            goods: [],
+            filteredGoods: [],
+            cartItems: [],
+            API_URL: 'http://127.0.0.1:64354/'
+        }
+    },
+    methods: {
+        makeGETRequest() {
+            let xhr = new XMLHttpRequest();
+            return new Promise((resolve, reject) => {
+                xhr.open('GET', `${this.API_URL}products/data.json`, 'true');
+                xhr.send(null);
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        let response = JSON.parse(xhr.responseText);
+                        resolve(response);
+                    } else {
+                        reject(`Не удалось получить объект с товарами: функция makeGETRequest вернула статус ${xhr.status}`);
+                    }
+                }
+            });
+        },
+    },
+    mounted() {
+        this.makeGETRequest().then((response) => {
+            response.goods.forEach(good => {
+                // Меняем пустые значения из JSON (null) на дефолтные. Возможно, во Vue есть более подходящее для этого решение, но я не нашёл, и решил, что будет гораздо удобнее, если значения будут задаваться в самом начале. Это избавит от необходимости задавать их вручную в дальнейшем.
+                for (let key in good) {
+                    if (good[key] === null) {
+                        if (!good.title) {
+                            good.title = 'Unknown Product';
+                        } else if (!good.img) {
+                            good.img = 'https://via.placeholder.com/300x457'
+                        } else if (!good.salePrice) {
+                            good.salePrice = 100500;
+                        }
+                    }
+                }
+
+                // Пушим товары в массивы goods и filteredGoods
+                this.goods.push(good);
+                this.filteredGoods.push(good);
+            });
+        }).catch((message) => {
+            // На случай, если сервер не обработает наш запрос
+            console.error(message);
+        });
+    },
+    components: {
+        'shop-goods-list': ShopGoodsList,
+        'shop-goods-item': shopGoodsItem,
+        'shop-cart-list': shopCartList,
+        'shop-cart-item': shopCartItem
+    }
+}
+
+const shop = new Vue({
+    el: '#shop',
+    data: {},
+    methods: {},
+    mounted() {},
+    components: {
+        'shop-main': ShopMain
+    }
+});
+
+/*
 (function () {
     class GoodsItem {
         conctructor(title, salePrice, img, id, count) {
@@ -113,7 +454,16 @@
                     goods.forEach(good => {
                         if (good.id === itemID) {
                             // Проверяем, присутствует ли товар в корзине
+                            for (let i = 0; cartList.items.length > i; i++) {
+                                if (good.id === cartList.items[i].id) {
+                                    // Если да, то присваем переменной goodAdded значение true
+                                    goodAdded = true;
+                                } else {
+                                    goodAdded = false;
+                                }
+                            }
                             cartList.items.forEach(cartItem => {
+                                console.log(goodAdded, good.id, cartItem.id);
                                 if (good.id === cartItem.id) {
                                     // Если да, то присваем переменной goodAdded значение true
                                     goodAdded = true;
@@ -121,7 +471,6 @@
                                     goodAdded = false;
                                 }
                             })
-
                             // Пушим товар в массив, если он ещё не был добавлен 
                             if (!goodAdded) {
                                 cartList.items.push(good);
@@ -351,7 +700,7 @@
         }
     }
 
-    const API_URL = 'https://anu3ev.com/',
+    const API_URL = 'http://anu3ev.com/',
         goodsList = new GoodsList(),
         dynamicBasket = new DynamicBasket(),
         searchPopup = new SearchPopup(),
@@ -360,3 +709,5 @@
     searchPopup.render();
     feedback.validation();
 }())
+
+*/
