@@ -131,3 +131,8 @@
 [v-cloak] {
     display: none;
 }
+
+label.required:after {
+    content: "*";
+    color: red;
+}
