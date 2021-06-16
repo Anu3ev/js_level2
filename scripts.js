@@ -24,6 +24,9 @@ let shopHeaderButtonsRight = {
     methods: {
         searchOpen() {
             eventBus.$emit('search-open');
+        },
+        cartOpen() {
+            eventBus.$emit('cart-open');
         }
     },
     template: `
