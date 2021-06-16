@@ -547,6 +547,90 @@ let shopGoodsSearch = {
     `
 }
 
+let shopFeedBack = {
+    data() {
+        return {
+            nameValue: '',
+            emailValue: '',
+            phoneValue: '',
+            textFiledValue: '',
+            regExpName: /^([А-Яа-яA-Za-z]+)?\s?([А-Яа-яA-Za-z]+)$/i,
+            regExpEmail: /^([A-Za-z0-9\.-]+)@([A-Za-z0-9]+)\.([a-z\.]{2,6})$/i,
+            regExpPhone: /^(\+7|8)\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/i,
+            messages: {
+                errorEmail: 'Error! Incorrect E-mail!',
+                errorName: 'Error! Incorrect Name!',
+                errorPhone: 'Error! Incorrect Phone Number!'
+            }
+        }
+    },
+    methods: {
+        checkInputValue(event, regExp, errorMessage) {
+            let status,
+                error = document.createElement('span');
+            error.classList = `input-error ${event.target.id}`;
+            error.textContent = errorMessage;
+
+            // С помощью этой переменной будем проверять, есть ли уже текст ошибки под полем, чтобы не выводить его повторно, если клиент дважды вводит неправильные данные 
+            let errorSpan = document.querySelector(`.input-error.${event.target.id}`);
+
+            // Проверяем совпадение с регулярным выражением. Если введённый в поле текст не совпадает с регулярным выражением, то присваем перменной status 0. Если совпадает, то помещаем в переменную status количество символов, которые совпали с регулярным выражением
+            if (event.target.value.match(regExp) === null) {
+                status = 0;
+            } else {
+                status = event.target.value.match(regExp).input.length;
+            }
+
+            // Если количество символов, которое совпало с регуляркой не равно количеству символов введённых в input, то выделяем input красным цветом, и выводим ошибку
+            if (event.target.value.length !== status) {
+                event.target.classList.add('b-error');
+                if (!errorSpan) event.target.parentElement.appendChild(error);
+            } else {
+                event.target.classList.remove('b-error');
+                if (errorSpan) event.target.parentElement.removeChild(errorSpan);
+            }
+        },
+    },
+    template: `
+        <div class="container m-b-70 m-t-50 pallette_1">
+            <h1 class="h1-like text-center fw-400 m-t-0 m-b-0">Feedback Form</h1>
+
+            <div class="page-content page-feedback">
+                <form id="feedback_form" style="text-align: center;" action="#" method="post" @submit.prevent>
+                    <table style="width: 650px; padding: 0px 40px;" border="0">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <div id="thanks"></div>
+                                    <p style="line-height: 1.8;">
+                                        <label class="required">Name:</label> <br><input id="feedback_name" name="feedback[name]" size="30" type="text" required placeholder="Example: Alexander Anufriev" @change="checkInputValue($event, regExpName, messages.errorName)">
+                                    </p>
+
+                                    <p style="line-height: 1.8;">
+                                        <label class="required">E-mail:</label><br><input id="feedback_from" name="feedback[from]" size="30" type="text" required placeholder="mymail@gmail.com" @change="checkInputValue($event, regExpEmail, messages.errorEmail)">
+                                    </p>
+
+                                    <p style="line-height: 1.8;">
+                                        <label class="required">Phone Number:</label> <br><input id="feedback_phone" name="feedback[phone]" size="30" type="tel" required placeholder="+7(000)000-0000" @change="checkInputValue($event, regExpPhone, messages.errorPhone)">
+                                    </p>
+
+                                    <p style="line-height: 1.8;">
+                                        <label>Your question, review or suggestions:</label><br><textarea id="feedback_content" cols="50" name="feedback[content]" rows="8"></textarea>
+                                    </p>
+
+                                    <p><small>We will call you back because we need your money :)</small></p>
+
+                                    <p><input id="feedback_commit" name="commit" type="submit" value="Send"></p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    `
+}
+
 let shopMain = {
     components: {
         'shop-goods-list': shopGoodsList,
@@ -554,13 +638,14 @@ let shopMain = {
         'shop-cart-list': shopCartList,
         'shop-cart-item': shopCartItem,
         'shop-goods-search': shopGoodsSearch,
+        'shop-feed-back': shopFeedBack
     },
     data() {
         return {
             goods: [],
             filteredGoods: [],
             cartItems: [],
-            API_URL: 'http://127.0.0.1:51670/'
+            API_URL: 'https://anu3ev.com/'
         }
     },
     mounted() {
@@ -620,393 +705,96 @@ let shopMain = {
             </div>
             <shop-cart-list :cart-items="cartItems"></shop-cart-list>
             <shop-goods-search></shop-goods-search>
+            <shop-feed-back></shop-feed-back>
         </main>
     `,
 }
 
+let shopFooter = {
+    template: `
+        <footer class="pallette_2 p-t-50">
+            <div class="container">
+                <div class="row is-grid text-center">
+                    <div class="cell-12 text-center">
+                        <div class="m-b-20">
+                            <a href="/" title="Super Expensive Shop">
+                                <img class="footer-logo" src="images/logo.png" alt="Super Expensive Shop" title="Super Expensive Shop">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="cell-12 text-center m-b-20">
+                        <div class="footer-menu">
+                            <ul class="no-list-style no-pad no-marg fw-300">
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Privacy</a></li>
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Terms of Use</a></li>
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Payment and Delivery</a></li>
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Blog</a></li>
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Feedback</a></li>
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Catalog</a></li>
+                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Contacts</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <div class="cell-12 m-b-20">
+                        <ul class="social no-list-style h4-like p-0 m-t-0 m-b-0">
+                            <li class="inline-middle m-l-5 m-r-5">
+                                <a target="_blank" href="https://www.vk.com" title="vk">
+                                    <div class="fa fa-vk" aria-hidden="true"></div>
+                                </a>
+                            </li>
+                            <li class="inline-middle m-l-5 m-r-5">
+                                <a target="_blank" href="https://www.twitter.com" title="twitter">
+                                    <div class="fa fa-twitter" aria-hidden="true"></div>
+                                </a>
+                            </li>
+                            <li class="inline-middle m-l-5 m-r-5">
+                                <a target="_blank" href="https://www.fb.com" title="facebook">
+                                    <div class="fa fa-facebook" aria-hidden="true"></div>
+                                </a>
+                            </li>
+                            <li class="inline-middle m-l-5 m-r-5">
+                                <a target="_blank" href="https://www.instagram.com" title="instagram">
+                                    <div class="fa fa-instagram" aria-hidden="true"></div>
+                                </a>
+                            </li>
+                            <li class="inline-middle m-l-5 m-r-5">
+                                <a target="_blank" href="https://www.ok.ru" title="odnoklassniki">
+                                    <div class="fa fa-odnoklassniki" aria-hidden="true"></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="cell-12 text-center">
+                        <div class="m-b-10">
+                            <a class="h4-like" href="tel:8(800)0000000">8(800)000 00 00</a>
+                        </div>
+                    </div>
+
+                    <div class="cell-12 text-center">
+                        <div class="b-top p-t-20 p-b-20 m-t-30">
+                            <small>by Anu3ev</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    `
+}
+
+// Создаём шину событий, чтобы передавать данные между компонентами
 const eventBus = new Vue({});
 
 const shop = new Vue({
     components: {
         'shop-main': shopMain,
-        'shop-header': shopHeader
+        'shop-header': shopHeader,
+        'shop-footer': shopFooter
     },
     el: '#shop',
     data: {},
     methods: {},
     mounted() {},
 });
-
-/*
-(function () {
-    class GoodsItem {
-        conctructor(title, salePrice, img, id, count) {
-            this.title = title;
-            this.salePrice = salePrice;
-            this.img = img;
-            this.count = count;
-            this.id = id;
-        }
-
-        render({
-            title = 'Unknown Product',
-            salePrice = 100500,
-            img = 'https://via.placeholder.com/300x457',
-            count,
-            id
-        }) {
-            return `<div class="cell-3 m-b-30 cell-4-m cell-6-sm cell-12-xs">
-                        <div class="product-item">
-                            <a class="product-image square rel-img m-b-20 no-transparent " href="#" data-url="#" data-prod-title="${title}" data-open-product="">
-                                <img class="transition" src="${img}">
-                            </a>
-                            <div class="product-item__title text-center">
-                                <a class="fw-400" href="#">${title}</a>
-                                <div><span class="product-price fw-700">$${salePrice}</span></div>
-                            </div>
-                            <div class="cell-12 cell-12-m">
-                                <button type="submit" data-item-add="${id}" data-count="1" class="bttn-reg in-product js-basket c_button w-100" custom-popup-link="dynamic_basket">ADD TO CART</button>
-                            </div>
-                        </div>
-                    </div>`;
-        }
-    }
-
-    class GoodsList {
-        constructor() {
-            this.goods = [];
-            this.filteredGoods = [];
-        }
-
-        fetchGoods() {
-            let xhr = new XMLHttpRequest();
-
-            function makeGETRequest() {
-                return new Promise((resolve, reject) => {
-                    xhr.open('GET', `${API_URL}products/data.json`, 'true');
-                    xhr.send(null);
-
-                    xhr.onload = function () {
-                        if (xhr.status == 200) {
-                            let response = JSON.parse(xhr.responseText);
-                            resolve(response);
-                        } else {
-                            reject(`Не удалось получить объект с товарами: функция makeGETRequest вернула статус ${xhr.status}`);
-                        }
-                    }
-                });
-            }
-
-            makeGETRequest().then((response) => {
-                response.goods.forEach(good => {
-                    // Меняем пустые значения из JSON (null) на undefined, чтобы наши дефолтные значения параметров при рендеринге отрабатывали как надо (в JSON не бывает undefined)
-                    for (let key in good) {
-                        if (good[key] === null) {
-                            good[key] = undefined;
-                        }
-                    }
-
-                    // Пушим товары в массив
-                    this.goods.push(good);
-                    this.filteredGoods.push(good);
-                });
-            }).then(() => {
-                // Запускаем рендеринг товаров
-                goodsList.render();
-            }).catch((message) => {
-                // На случай, если сервер не обработает наш запрос
-                console.error(message);
-            });
-        }
-
-        filterGoods(value) {
-            // Здесь будем фильтровать список товаров
-            const regexp = new RegExp(value, 'i');
-            this.filteredGoods = this.goods.filter(good => regexp.test(good.title));
-            this.render();
-        }
-
-        render() {
-            let listHtml = '';
-
-            this.filteredGoods.forEach(good => {
-                const goodItem = new GoodsItem();
-                listHtml += goodItem.render(good);
-            });
-
-            document.querySelector('.goods-list').innerHTML = listHtml;
-
-            // После рендеринга товаров запускаем слушатель для кнопки добавления в корзину
-            this.addToCart();
-        }
-
-        // Здесь проверяем клик по кнопке добавления товара в корзину, и если ID кнопки совпадает с ID товара, то пушим этот товар в CartList
-        addToCart() {
-            const cartList = new CartList();
-            let goods = this.goods,
-                goodAdded = false;
-            dynamicBasket.render();
-
-            document.querySelectorAll('[data-item-add]').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    let itemID = +e.target.getAttribute('data-item-add');
-                    goods.forEach(good => {
-                        if (good.id === itemID) {
-                            // Проверяем, присутствует ли товар в корзине
-                            for (let i = 0; cartList.items.length > i; i++) {
-                                if (good.id === cartList.items[i].id) {
-                                    // Если да, то присваем переменной goodAdded значение true
-                                    goodAdded = true;
-                                } else {
-                                    goodAdded = false;
-                                }
-                            }
-                            cartList.items.forEach(cartItem => {
-                                console.log(goodAdded, good.id, cartItem.id);
-                                if (good.id === cartItem.id) {
-                                    // Если да, то присваем переменной goodAdded значение true
-                                    goodAdded = true;
-                                } else {
-                                    goodAdded = false;
-                                }
-                            })
-                            // Пушим товар в массив, если он ещё не был добавлен 
-                            if (!goodAdded) {
-                                cartList.items.push(good);
-                                cartList.render();
-                                // Если уже добавлен, то прибавляем количество и рендерим корзину, чтобы оно обновилось
-                            } else {
-                                good.count++;
-                                cartList.render();
-                            }
-                        }
-                    });
-                });
-            });
-        }
-    }
-
-    // Наследуемся от GoodsItem и создаём новый класс для товара добавленного в корзину пишем метод его рендеринга
-    class CartItem extends GoodsItem {
-        constructor(title, salePrice, img, id, count, cartPrice) {
-            super(title, salePrice, img, id);
-            this.count = count;
-            this.cartPrice = cartPrice;
-        }
-
-        render({
-            title = 'Unknown Product',
-            salePrice = 100500,
-            img = 'https://via.placeholder.com/300x457',
-            count = 1,
-            cartPrice = (salePrice * count),
-            id
-        }) {
-            return `
-                <div class="cart-item relative b-top p-t-15 p-b-15 is-one" data-item-id="${id}">
-                    <div class="row is-grid flex-middle">
-                        <div class="cart-image cell-2 cell-4-s">
-                            <img src="${img}">
-                        </div>
-                        <div class="cart-text cell-10 cell-8-s">
-                            <div class="cart-title text-uppercase m-b-5">${title}</div>
-
-                            <div class="cart-price m-b-5">
-                                <label class="cart-label fw-300">Price:</label>
-                                <span class="c_special_2_color fw-400" data-change-price="">$${(cartPrice).toFixed(2)}</span>
-                            </div>
-                            <div class="cart-quan m-b-5">
-                            <label class="cart-label fw-300 inline-middle">Quantity:</label>
-                            <div data-quantity="" class="quantity is-basket inline-middle">
-                              <div class="quantity-controls">
-                                <button data-quantity-change="-1" class="quantity-control bttn-count">-</button>
-                                <input class="quantity-input" type="text" data-item-id="${id}" value="${count}">
-                                <button data-quantity-change="1" class="quantity - control bttn-count">+</button>
-                              </div>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-    }
-
-    // Создаём класс для вывода списка товаров добавленных в корзину и выводим их итоговую стоимость.
-    class CartList {
-        constructor(items) {
-            this.items = [];
-        }
-
-        render() {
-            // Заводим переменные
-            let listHtml = '',
-                cartTotal = 0;
-            const dynamicBusketList = document.querySelector('.dynamic_basket-list'),
-                dynamicBusketTotal = document.querySelector('[data-cart-total-price]');
-
-            // Перебирем список товаров
-            this.items.forEach(item => {
-                // Отправляем товары на рендеринг в CartItem
-                const cartItem = new CartItem();
-                listHtml += cartItem.render(item);
-
-                // Считаем стоимость всех товаров в корзине
-                cartTotal += ((!item.salePrice ? 100500 : item.salePrice) * item.count);
-            });
-
-            // Выводим список товаров и их стоимость
-            dynamicBusketList.innerHTML = listHtml;
-            dynamicBusketTotal.setAttribute('data-cart-total-price', cartTotal);
-            dynamicBusketTotal.innerHTML = `$${cartTotal.toFixed(2)}`;
-        }
-    }
-
-    // Здесь перечислены все слушатели событий связанные с управлением корзиной
-    class DynamicBasket {
-        constuctor() {
-            this.popup = popup;
-            this.buttonClose = buttonClose;
-            this.links = links;
-        }
-
-        render() {
-            this.popup = document.querySelector('[custom-popup-modal="dynamic_basket"]');
-            this.buttonClose = document.querySelector('[custom-popup-close="dynamic_basket"]');
-            this.links = document.querySelectorAll('[custom-popup-link="dynamic_basket"]');
-
-            this.open = () => {
-                this.popup.classList.add('opened');
-            }
-
-            this.close = () => {
-                this.popup.classList.remove('opened');
-            }
-
-            this.links.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.open();
-                });
-            });
-
-            this.buttonClose.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.close()
-            });
-        }
-    }
-
-    // Здесь перечислены все слушатели событий связанные с управлением поиском
-    class SearchPopup {
-        costructor() {
-            this.popup = popup;
-            this.buttonClose = buttonClose;
-            this.links = links;
-            this.searchInput = searchInput;
-            this.searchLink = searchLink;
-        }
-
-        render() {
-            this.popup = document.querySelector('[custom-popup-modal="search-form"]');
-            this.buttonClose = document.querySelector('[custom-popup-close="search-form"]');
-            this.searchSubmit = document.querySelector('.search_widget button[type="submit"]');
-            this.searchInput = document.querySelector('input[data-search-field]');
-            this.searchLink = document.querySelector('[custom-popup-link="search-form"]');
-
-            this.open = () => {
-                this.popup.classList.add('opened');
-            }
-
-            this.close = () => {
-                this.popup.classList.remove('opened');
-            }
-
-            this.searchLink.addEventListener('click', () => {
-                this.open();
-                this.searchInput.focus();
-            });
-
-            this.buttonClose.addEventListener('click', () => {
-                this.close();
-            })
-
-            this.searchSubmit.addEventListener('click', (e) => {
-                e.preventDefault();
-                const value = this.searchInput.value;
-                goodsList.filterGoods(value);
-                this.close();
-            });
-
-        }
-    }
-
-    class Feedback {
-        constructor() {
-            this.form = document.getElementById('feedback_form');
-            this.name = document.getElementById('feedback_name');
-            this.phone = document.getElementById('feedback_phone');
-            this.email = document.getElementById('feedback_from');
-            this.submit = document.getElementById('feedback_commit');
-        }
-
-        validation() {
-            // Заводим переменные
-            const regExpName = /^([А-Яа-яA-Za-z]+)?\s?([А-Яа-яA-Za-z]+)$/i,
-                regExpPhone = /^(\+7|8)\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/i,
-                regExpEmail = /^([A-Za-z0-9\.-]+)@([A-Za-z0-9]+)\.([a-z\.]{2,6})$/i,
-                messages = {
-                    errorEmail: 'Error! Incorrect E-mail!',
-                    errorName: 'Error! Incorrect Name!',
-                    errorPhone: 'Error! Incorrect Phone Number!'
-                }
-
-            // Пишем функцию в которую будем отправлять содержимое полей на проверку
-            function checkInputValue(input, regExp, errorMessage) {
-                let status,
-                    error = document.createElement('span');
-                error.classList.add('input-error');
-                error.textContent = errorMessage;
-
-                input.addEventListener('change', (e) => {
-                    // Проверяем совпадение с регулярным выражением. Если введённый в поле текст не совпадает с регулярным выражением, то присваем перменной status 0. Если совпадает, то помещаем в переменную status количество символов, которые совпали с регулярным выражением
-                    if (e.target.value.match(regExp) === null) {
-                        status = 0;
-                    } else {
-                        status = e.target.value.match(regExp).input.length;
-                    }
-
-                    // Если количество символов, которое совпало с регуляркой не равно количеству символов введённых в input, то выделяем input красным цветом, и выводим ошибку
-                    if (e.target.value.length !== status) {
-                        e.target.classList.add('b-error');
-                        e.target.parentElement.append(error);
-                    } else {
-                        e.target.classList.remove('b-error');
-                        e.target.parentElement.removeChild(error);
-                    }
-                });
-            }
-
-            // Запускаем проверку полей
-            checkInputValue(this.name, regExpName, messages.errorName);
-            checkInputValue(this.phone, regExpPhone, messages.errorPhone);
-            checkInputValue(this.email, regExpEmail, messages.errorEmail);
-
-            // Так как форму пока некуда отправлять, сбрасываем сабмит
-            this.form.addEventListener('submit', (e) => {
-                e.preventDefault();
-            })
-        }
-    }
-
-    const API_URL = 'http://anu3ev.com/',
-        goodsList = new GoodsList(),
-        dynamicBasket = new DynamicBasket(),
-        searchPopup = new SearchPopup(),
-        feedback = new Feedback();
-    goodsList.fetchGoods();
-    searchPopup.render();
-    feedback.validation();
-}())
-
-*/

@@ -15,107 +15,11 @@
     <div id="shop" v-cloak>
         <shop-header></shop-header>
         <shop-main></shop-main>
-
-        <div class="container m-b-70 m-t-50 pallette_1">
-            <h1 class="h1-like text-center fw-400 m-t-0 m-b-0">Feedback Form</h1>
-
-            <div class="page-content page-feedback">
-                <form id="feedback_form" style="text-align: center;" action="#" method="post">
-                    <table style="width: 650px; padding: 0px 40px;" border="0">
-                        <tbody>
-                            <tr>
-                                <td style="text-align: center;">
-                                    <div id="thanks"></div>
-                                    <p style="line-height: 1.8;"><label class="required">Name:</label> <br><input id="feedback_name" name="feedback[name]" size="30" type="text" required placeholder="Example: Alexander Anufriev"></p>
-                                    <p style="line-height: 1.8;"><label class="required">E-mail:</label><br><input id="feedback_from" name="feedback[from]" size="30" type="text" required placeholder="mymail@gmail.com"></p>
-                                    <p style="line-height: 1.8;"><label class="required">Phone Number:</label> <br><input id="feedback_phone" name="feedback[phone]" size="30" type="tel" required placeholder="+7(000)000-0000"></p>
-                                    <p style="line-height: 1.8;"><label>Your question, review or suggestions:</label><br><textarea id="feedback_content" cols="50" name="feedback[content]" rows="8"></textarea></p>
-                                    <p><small>We will call you back because we need your money :)</small></p>
-                                    <p><input id="feedback_commit" name="commit" type="submit" value="Send"></p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
-            </div>
-        </div>
-        <footer class="pallette_2 p-t-50">
-            <div class="container">
-                <div class="row is-grid text-center">
-                    <div class="cell-12 text-center">
-                        <div class="m-b-20">
-                            <a href="/" title="Super Expensive Shop">
-                                <img class="footer-logo" src="images/logo.png" alt="Super Expensive Shop" title="Super Expensive Shop">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="cell-12 text-center m-b-20">
-                        <div class="footer-menu">
-                            <ul class="no-list-style no-pad no-marg fw-300">
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Privacy</a></li>
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Terms of Use</a></li>
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Payment and Delivery</a></li>
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Blog</a></li>
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Feedback</a></li>
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Catalog</a></li>
-                                <li class="inline-top m-t-5 m-l-5 m-r-5 m-b-5"><a class="bttn-underline" href="#">Contacts</a></li>
-                            </ul>
-                        </div>
-
-                    </div>
-
-                    <div class="cell-12 m-b-20">
-                        <ul class="social no-list-style h4-like p-0 m-t-0 m-b-0">
-
-                            <li class="inline-middle m-l-5 m-r-5">
-                                <a target="_blank" href="https://www.vk.com" title="vk">
-                                    <div class="fa fa-vk" aria-hidden="true"></div>
-                                </a>
-                            </li>
-
-                            <li class="inline-middle m-l-5 m-r-5">
-                                <a target="_blank" href="https://www.twitter.com" title="twitter">
-                                    <div class="fa fa-twitter" aria-hidden="true"></div>
-                                </a>
-                            </li>
-
-                            <li class="inline-middle m-l-5 m-r-5">
-                                <a target="_blank" href="https://www.fb.com" title="facebook">
-                                    <div class="fa fa-facebook" aria-hidden="true"></div>
-                                </a>
-                            </li>
-                            <li class="inline-middle m-l-5 m-r-5">
-                                <a target="_blank" href="https://www.instagram.com" title="instagram">
-                                    <div class="fa fa-instagram" aria-hidden="true"></div>
-                                </a>
-                            </li>
-                            <li class="inline-middle m-l-5 m-r-5">
-                                <a target="_blank" href="https://www.ok.ru" title="odnoklassniki">
-                                    <div class="fa fa-odnoklassniki" aria-hidden="true"></div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="cell-12 text-center">
-                        <div class="m-b-10">
-                            <a class="h4-like" href="tel:8(800)0000000">8(800)000 00 00</a>
-                        </div>
-                        <!--<div class="m-b-30">
-                        <a class="js-modal bttn-underline bold-border" href="#feedback-modal">Обратный звонок</a>
-                    </div>-->
-                    </div>
-
-                    <div class="cell-12 text-center">
-                        <div class="b-top p-t-20 p-b-20 m-t-30">
-                            <small>by Anu3ev</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <shop-footer></shop-footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="scripts.js"></script>
-</body></html>
+</body>
+
+</html>
