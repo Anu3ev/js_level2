@@ -1,5 +1,5 @@
 let shopHeaderMobileMenu = {
-    template: `
+  template: `
          <div class="cell-4 cell-3-sm">
             <a href="#" class="js-open-main-menu" custom-popup-link="mobile-menu">
                 <div class="burger">
@@ -7,29 +7,29 @@ let shopHeaderMobileMenu = {
                 </div>
             </a>
         </div>
-    `
-}
+    `,
+};
 
 let shopHeaderLogotype = {
-    template: `
+  template: `
         <div class="cell-4 cell-6-sm text-center">
             <a class="inline-middle" href="/" title="Super Expensive Shop">
                 <img class="show" src="images/logo.png" alt="Super Expensive Shop" title="Super Expensive Shop">
             </a>
         </div>
-    `
-}
+    `,
+};
 
 let shopHeaderButtonsRight = {
-    methods: {
-        searchOpen() {
-            eventBus.$emit('search-open');
-        },
-        cartOpen() {
-            eventBus.$emit('cart-open');
-        }
+  methods: {
+    searchOpen() {
+      eventBus.$emit('search-open');
     },
-    template: `
+    cartOpen() {
+      eventBus.$emit('cart-open');
+    },
+  },
+  template: `
         <div class="cell-4 cell-3-sm">
             <div class="header-menu-right row flex-middle flex-end">
                 <div>
@@ -108,11 +108,11 @@ s-4-1.794-4-4S20.794,45,23,45z M58,36.013C58,37.66,56.66,39,55.013,39H16.821l-4.
                 </div>
             </div>
         </div>
-    `
-}
+    `,
+};
 
 let shopHeaderMenu = {
-    template: `
+  template: `
         <div class="cell-12 hide-sm">
             <div class="header-menu text-center p-t-40 m-t-40 b-top">
                 <ul class="no-list-style no-pad no-marg">
@@ -201,17 +201,17 @@ let shopHeaderMenu = {
                 </ul>
             </div>
         </div>
-    `
-}
+    `,
+};
 
 let shopHeader = {
-    components: {
-        'shop-header-mobile-menu': shopHeaderMobileMenu,
-        'shop-header-logotype': shopHeaderLogotype,
-        'shop-header-buttons-right': shopHeaderButtonsRight,
-        'shop-header-menu': shopHeaderMenu
-    },
-    template: `
+  components: {
+    'shop-header-mobile-menu': shopHeaderMobileMenu,
+    'shop-header-logotype': shopHeaderLogotype,
+    'shop-header-buttons-right': shopHeaderButtonsRight,
+    'shop-header-menu': shopHeaderMenu,
+  },
+  template: `
         <header class="transition p-t-40 p-b-40 p-t-15-sm p-b-15-sm">
             <div class="container">
                 <div class="row is-grid flex-middle flex-between">
@@ -222,48 +222,53 @@ let shopHeader = {
                 </div>
             </div>
         </header>
-    `
-}
+    `,
+};
 
 let shopCartItem = {
-    props: {
-        item: {
-            title: {
-                type: String,
-                required: true
-            },
-            cartPrice: {
-                type: Number,
-                required: true
-            },
-            salePrice: {
-                type: Number
-            },
-            img: {
-                type: String,
-                required: true
-            },
-            id: {
-                type: Number,
-                required: true
-            }
-        },
+  props: {
+    item: {
+      title: {
+        type: String,
+        required: true,
+      },
+      cartPrice: {
+        type: Number,
+        required: true,
+      },
+      salePrice: {
+        type: Number,
+      },
+      img: {
+        type: String,
+        required: true,
+      },
+      id: {
+        type: Number,
+        required: true,
+      },
     },
-    methods: {
-        countPlus(cartItem) {
-            this.item.count++;
-            eventBus.$emit('total-price-calculate', cartItem);
-        },
-        countMinus(cartItem) {
-            if (this.item.count === 1) {
-                eventBus.$emit('remove-item', cartItem);
-            } else {
-                this.item.count--;
-            }
-            eventBus.$emit('total-price-calculate', cartItem);
-        },
+  },
+  methods: {
+    countPlus(cartItem) {
+      // Отправляем cartItem в shopMain для увеличения его количества
+      cartItem.mathOperation = 'plus';
+      eventBus.$emit('server-item-add', cartItem);
+      eventBus.$emit('total-price-calculate');
     },
-    template: `
+    countMinus(cartItem) {
+      if (this.item.count === 1) {
+        eventBus.$emit('remove-item', cartItem);
+      } else {
+        // Отправляем cartItem в shopMain для уменьшения его количества
+        cartItem.mathOperation = 'minus';
+        eventBus.$emit('server-item-add', cartItem);
+      }
+      // Запускаем перерасчёт итоговой стоимости корзины
+      eventBus.$emit('total-price-calculate');
+    },
+  },
+  template: `
         <div class="cart-item relative b-top p-t-15 p-b-15 is-one" :data-item-id="item.id">
             <div class="row is-grid flex-middle">
                 <div class="cart-image cell-2 cell-4-s">
@@ -289,61 +294,54 @@ let shopCartItem = {
                 </div>
             </div>
         </div>
-    `
-}
+    `,
+};
 
 let shopCartList = {
-    components: {
-        'shop-cart-item': shopCartItem
-    },
-    props: {
-        cartItems: Array
-    },
-    data() {
-        return {
-            isVisibleCart: false,
-            totalPrice: 0,
-            itemCartPrice: 0
+  components: {
+    'shop-cart-item': shopCartItem,
+  },
+  props: {
+    cartItems: Array,
+    totalPrice: {
+      type: Number,
+      default: 0,
+      required: true
+    }
+  },
+  data() {
+    return {
+      isVisibleCart: false,
+      itemCartPrice: 0,
+    };
+  },
+  mounted() {
+    // Обработчик клика по кнопке открытия корзины в шапке сайта
+    eventBus.$on('cart-open', () => {
+      this.isVisibleCart = true;
+    });
+
+    // Устанавливаем обработчик для кнопки добавления товара в корзину. При срабатывании добавляем корзине класс isVisibleCart
+    eventBus.$on('add-to-cart', () => {
+      this.isVisibleCart = true;
+    });
+
+    // Обработчик для удаления товара из корзины при уменьшении его количества < 1
+    eventBus.$on('remove-item', (cartItem) => {
+      this.cartItems.forEach((item, i) => {
+        if (cartItem.id === item.id) {
+          // Отправляем cartItem в shopMain для удаления товара из корзины на сервере
+          eventBus.$emit('remove-item', (cartItem));
         }
+      });
+    });
+  },
+  methods: {
+    cartClose() {
+      this.isVisibleCart = false;
     },
-    mounted() {
-        // Обработчик клика по кнопке открытия корзины в шапке сайта
-        eventBus.$on('cart-open', () => {
-            this.isVisibleCart = true;
-        });
-
-        // Устанавливаем обработчик для кнопки добавления товара в корзину. При срабатывании добавляем корзине класс isVisibleCart
-        eventBus.$on('add-to-cart', () => {
-            this.isVisibleCart = true;
-        });
-
-        // Обработчик для рассчёта итоговой стоимости всех товаров в корзине
-        eventBus.$on('total-price-calculate', (cartItem) => {
-            // Стоимость каждого товара с привязкой к количеству
-            cartItem.cartPrice = cartItem.salePrice * cartItem.count;
-
-            // Стоимость всех товаров в корзине
-            this.totalPrice = 0;
-            this.cartItems.forEach(item => {
-                this.totalPrice += item.salePrice * item.count;
-            });
-        });
-
-        // Обработчик для удаления товара из корзины при уменьшении его количества < 1
-        eventBus.$on('remove-item', (cartItem) => {
-            this.cartItems.forEach((item, i) => {
-                if (cartItem.id === item.id) {
-                    this.cartItems.splice(i, 1);
-                }
-            });
-        });
-    },
-    methods: {
-        cartClose() {
-            this.isVisibleCart = false;
-        }
-    },
-    template: `
+  },
+  template: `
         <div class="cart-popup side-popup transition pallette_1" :class="{ opened: isVisibleCart }">
             <div class="cart-title h2-like text-center p-b-20">Shopping Cart</div>
             <div class="cart-items dynamic_basket js-dynamic_basket">
@@ -374,36 +372,36 @@ let shopCartList = {
             </div>
         </div>
     `,
-}
+};
 
 let shopGoodsItem = {
-    props: {
-        good: {
-            title: {
-                type: String,
-                required: true
-            },
-            salePrice: {
-                type: Number,
-                required: true
-            },
-            img: {
-                type: String,
-                required: true
-            },
-            id: {
-                type: Number,
-                required: true
-            }
-        }
+  props: {
+    good: {
+      title: {
+        type: String,
+        required: true,
+      },
+      salePrice: {
+        type: Number,
+        required: true,
+      },
+      img: {
+        type: String,
+        required: true,
+      },
+      id: {
+        type: Number,
+        required: true,
+      },
     },
-    methods: {
-        // При клике на кнопку добавления товара в корзину вызываем событие через шину событий
-        addToCart(good) {
-            eventBus.$emit('add-to-cart', good);
-        }
+  },
+  methods: {
+    // При клике на кнопку добавления товара в корзину отправляем товар в shopGoodsList
+    addToCart(good) {
+      eventBus.$emit('add-to-cart', good);
     },
-    template: `
+  },
+  template: `
         <div class="cell-3 m-b-30 cell-4-m cell-6-sm cell-12-xs">
             <div class="product-item">
                 <a class="product-image square rel-img m-b-20 no-transparent " href="#" data-url="#" :data-prod-title="good.title" data-open-product="">
@@ -418,105 +416,102 @@ let shopGoodsItem = {
                 </div>
             </div>
         </div>
-    `
-}
+    `,
+};
 
 let shopGoodsList = {
-    components: {
-        'shop-goods-item': shopGoodsItem
-    },
-    props: {
-        filteredGoods: {
-            good: {
-                title: {
-                    type: String,
-                    required: true
-                },
-                salePrice: {
-                    type: Number,
-                    required: true
-                },
-                img: {
-                    type: String,
-                    required: true
-                },
-                id: {
-                    type: Number,
-                    required: true
-                }
-            }
+  components: {
+    'shop-goods-item': shopGoodsItem,
+  },
+  props: {
+    filteredGoods: {
+      good: {
+        title: {
+          type: String,
+          required: true,
         },
-        cartItems: {
-            item: {
-                title: {
-                    type: String,
-                    required: true
-                },
-                cartPrice: {
-                    type: Number,
-                    required: true
-                },
-                img: {
-                    type: String,
-                    required: true
-                },
-                id: {
-                    type: Number,
-                    required: true
-                }
-            }
-        }
+        salePrice: {
+          type: Number,
+          required: true,
+        },
+        img: {
+          type: String,
+          required: true,
+        },
+        id: {
+          type: Number,
+          required: true,
+        },
+      },
     },
-    mounted() {
-        // Обработчик для кнопки добавления товара в корзину. При срабатывании пушим товар в корзину, если его в ней ещё нет.
-        eventBus.$on('add-to-cart', (cartItem) => {
-            if (!this.cartItems.some(item => cartItem.id === item.id)) {
-                this.cartItems.push(cartItem);
-            } else {
-                cartItem.count++;
-            }
-
-            // Запускаем перерасчёт стоимости товаров в корзине
-            eventBus.$emit('total-price-calculate', cartItem);
-        });
+    cartItems: {
+      item: {
+        title: {
+          type: String,
+          required: true,
+        },
+        cartPrice: {
+          type: Number,
+          required: true,
+        },
+        img: {
+          type: String,
+          required: true,
+        },
+        id: {
+          type: Number,
+          required: true,
+        },
+      },
     },
-    template: `
+  },
+  mounted() {
+    // Обработчик для кнопки добавления товара в корзину. При срабатывании пушим товар в корзину, если его в ней ещё нет.
+    eventBus.$on('add-to-cart', (cartItem) => {
+      // Отправляем cartItem в shopMain для добавления товара в корзину или увеличения его количества
+      cartItem.mathOperation = 'plus';
+      eventBus.$emit('server-item-add', cartItem);
+      // Делаем перерасчёт стоимости товаров в корзине
+      eventBus.$emit('total-price-calculate');
+    });
+  },
+  template: `
         <div class="pallette_1 goods-list row is-grid flex-center" v-if="filteredGoods.length !== 0">
             <shop-goods-item v-for="good in filteredGoods" :good="good" :key="good.id"></shop-goods-item>
         </div>
         <h3 v-else>Something went wrong :(</h3>
     `,
-}
+};
 
 let shopGoodsSearch = {
-    data() {
-        return {
-            isOpened: false,
-            searchLine: ''
-        }
+  data() {
+    return {
+      isOpened: false,
+      searchLine: '',
+    };
+  },
+  mounted() {
+    // Обработчик клика по кнопке открытия поиска в шапке сайта
+    eventBus.$on('search-open', () => {
+      this.isOpened = true;
+    });
+  },
+  methods: {
+    searchClose() {
+      this.isOpened = false;
     },
-    mounted() {
-        // Обработчик клика по кнопке открытия поиска в шапке сайта
-        eventBus.$on('search-open', () => {
-            this.isOpened = true;
-        });
-    },
-    methods: {
-        searchClose() {
-            this.isOpened = false;
-        },
 
-        searchInput(e) {
-            this.searchLine = e.target.value;
-        },
-
-        // Передаём значение поля на шину событий, чтобы получить его в компоненте с товарами (shopGoodsList)
-        searchSubmit() {
-            eventBus.$emit('filter-goods', this.searchLine);
-            this.searchClose()
-        }
+    searchInput(e) {
+      this.searchLine = e.target.value;
     },
-    template: `
+
+    // Передаём значение поля на шину событий, чтобы получить его в компоненте с товарами (shopGoodsList)
+    searchSubmit() {
+      eventBus.$emit('filter-goods', this.searchLine);
+      this.searchClose();
+    },
+  },
+  template: `
         <div class="search-popup top-0 left-0 right-0 bottom-0" :class="{ opened: isOpened }">
             <a class="button-close" href="#" @click.prevent="searchClose()">
                 <!--?xml version="1.0" encoding="iso-8859-1"?-->
@@ -547,54 +542,54 @@ let shopGoodsSearch = {
                 </form>
             </div>
         </div>
-    `
-}
+    `,
+};
 
 let shopFeedBack = {
-    data() {
-        return {
-            nameValue: '',
-            emailValue: '',
-            phoneValue: '',
-            textFiledValue: '',
-            regExpName: /^([А-Яа-яA-Za-z]+)?\s?([А-Яа-яA-Za-z]+)$/i,
-            regExpEmail: /^([A-Za-z0-9\.-]+)@([A-Za-z0-9]+)\.([a-z\.]{2,6})$/i,
-            regExpPhone: /^(\+7|8)\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/i,
-            messages: {
-                errorEmail: 'Error! Incorrect E-mail!',
-                errorName: 'Error! Incorrect Name!',
-                errorPhone: 'Error! Incorrect Phone Number!'
-            }
-        }
+  data() {
+    return {
+      nameValue: '',
+      emailValue: '',
+      phoneValue: '',
+      textFiledValue: '',
+      regExpName: /^([А-Яа-яA-Za-z]+)?\s?([А-Яа-яA-Za-z]+)$/i,
+      regExpEmail: /^([A-Za-z0-9\.-]+)@([A-Za-z0-9]+)\.([a-z\.]{2,6})$/i,
+      regExpPhone: /^(\+7|8)\([0-9]{3}\)[0-9]{3}-[0-9]{4}$/i,
+      messages: {
+        errorEmail: 'Error! Incorrect E-mail!',
+        errorName: 'Error! Incorrect Name!',
+        errorPhone: 'Error! Incorrect Phone Number!',
+      },
+    };
+  },
+  methods: {
+    checkInputValue(event, regExp, errorMessage) {
+      let status,
+        error = document.createElement('span');
+      error.classList = `input-error ${event.target.id}`;
+      error.textContent = errorMessage;
+
+      // С помощью этой переменной будем проверять, есть ли уже текст ошибки под полем, чтобы не выводить его повторно, если клиент дважды вводит неправильные данные
+      let errorSpan = document.querySelector(`.input-error.${event.target.id}`);
+
+      // Проверяем совпадение с регулярным выражением. Если введённый в поле текст не совпадает с регулярным выражением, то присваем перменной status 0. Если совпадает, то помещаем в переменную status количество символов, которые совпали с регулярным выражением
+      if (event.target.value.match(regExp) === null) {
+        status = 0;
+      } else {
+        status = event.target.value.match(regExp).input.length;
+      }
+
+      // Если количество символов, которое совпало с регуляркой не равно количеству символов введённых в input, то выделяем input красным цветом, и выводим ошибку
+      if (event.target.value.length !== status) {
+        event.target.classList.add('b-error');
+        if (!errorSpan) event.target.parentElement.appendChild(error);
+      } else {
+        event.target.classList.remove('b-error');
+        if (errorSpan) event.target.parentElement.removeChild(errorSpan);
+      }
     },
-    methods: {
-        checkInputValue(event, regExp, errorMessage) {
-            let status,
-                error = document.createElement('span');
-            error.classList = `input-error ${event.target.id}`;
-            error.textContent = errorMessage;
-
-            // С помощью этой переменной будем проверять, есть ли уже текст ошибки под полем, чтобы не выводить его повторно, если клиент дважды вводит неправильные данные 
-            let errorSpan = document.querySelector(`.input-error.${event.target.id}`);
-
-            // Проверяем совпадение с регулярным выражением. Если введённый в поле текст не совпадает с регулярным выражением, то присваем перменной status 0. Если совпадает, то помещаем в переменную status количество символов, которые совпали с регулярным выражением
-            if (event.target.value.match(regExp) === null) {
-                status = 0;
-            } else {
-                status = event.target.value.match(regExp).input.length;
-            }
-
-            // Если количество символов, которое совпало с регуляркой не равно количеству символов введённых в input, то выделяем input красным цветом, и выводим ошибку
-            if (event.target.value.length !== status) {
-                event.target.classList.add('b-error');
-                if (!errorSpan) event.target.parentElement.appendChild(error);
-            } else {
-                event.target.classList.remove('b-error');
-                if (errorSpan) event.target.parentElement.removeChild(errorSpan);
-            }
-        },
-    },
-    template: `
+  },
+  template: `
         <div class="container m-b-70 m-t-50 pallette_1">
             <h1 class="h1-like text-center fw-400 m-t-0 m-b-0">Feedback Form</h1>
 
@@ -631,90 +626,161 @@ let shopFeedBack = {
                 </form>
             </div>
         </div>
-    `
-}
+    `,
+};
 
 let shopMain = {
-    components: {
-        'shop-goods-list': shopGoodsList,
-        'shop-goods-item': shopGoodsItem,
-        'shop-cart-list': shopCartList,
-        'shop-cart-item': shopCartItem,
-        'shop-goods-search': shopGoodsSearch,
-        'shop-feed-back': shopFeedBack
-    },
-    data() {
-        return {
-            goods: [],
-            filteredGoods: [],
-            cartItems: [],
-            API_URL: 'https://anu3ev.com/'
-        }
-    },
-    mounted() {
-        this.makeGETRequest().then((response) => {
-            response.goods.forEach(good => {
-                // Меняем пустые значения из JSON (null) на дефолтные.
-                for (let key in good) {
-                    if (good[key] === null) {
-                        if (!good.title) {
-                            good.title = 'Unknown Product';
-                        } else if (!good.img) {
-                            good.img = 'https://via.placeholder.com/300x457'
-                        } else if (!good.salePrice) {
-                            good.salePrice = 100500;
-                        }
-                    }
-                }
+  components: {
+    'shop-goods-list': shopGoodsList,
+    'shop-goods-item': shopGoodsItem,
+    'shop-cart-list': shopCartList,
+    'shop-cart-item': shopCartItem,
+    'shop-goods-search': shopGoodsSearch,
+    'shop-feed-back': shopFeedBack,
+  },
+  data() {
+    return {
+      goods: [],
+      filteredGoods: [],
+      cartItems: [],
+      API_URL: '/catalogData',
+      API_CART_URL: '/cartItems',
+      API_TOTAL_PRICE_CALC_URL: '/totalPrice',
+      totalPrice: 0
+    };
+  },
+  mounted() {
+    // Запрос на сервер для получения списка товаров каталога
+    this.makeGETRequest(this.API_URL)
+      .then((response) => {
+        response.goods.forEach((good) => {
+          // Меняем пустые значения из JSON (null) на дефолтные.
+          for (let key in good) {
+            if (good[key] === null) {
+              if (!good.title) {
+                good.title = 'Unknown Product';
+              } else if (!good.img) {
+                good.img = 'https://via.placeholder.com/300x457';
+              } else if (!good.salePrice) {
+                good.salePrice = 100500;
+              }
+            }
+          }
 
-                // Пушим товары в массивы goods и filteredGoods
-                this.goods.push(good);
-                this.filteredGoods.push(good);
-            });
+          // Пушим товары в массивы goods и filteredGoods
+          this.goods.push(good);
+          this.filteredGoods.push(good);
+        });
+      })
+      .catch((message) => {
+        console.error(message);
+      });
+
+    // Запрос на получение списка товаров корзины при загрузке страницы
+    this.makeGETRequest(this.API_CART_URL)
+      .then((response) => {
+        response.forEach((item) => {
+          // Пушим товары в массив cartItems
+          this.cartItems.push(item);
+          eventBus.$emit('total-price-calculate');
+        });
+      })
+      .catch((message) => {
+        console.error(message);
+      });
+
+    // Запрос на расчёт итоговой стоимости товаров в корзине при загрузке страницы
+    eventBus.$on('total-price-calculate', () => {
+      this.makeGETRequest(this.API_TOTAL_PRICE_CALC_URL)
+        .then((response) => {
+          this.totalPrice = response[0];
         }).catch((message) => {
-            // На случай, если сервер не обработает наш запрос
-            console.error(message);
-        });
+          console.error(message);
+        })
+    });
 
-        // Событие фильтрации товаров через поиск
-        eventBus.$on('filter-goods', (value) => {
-            const regexp = new RegExp(value, 'i');
-            this.filteredGoods = this.goods.filter(good => regexp.test(good.title));
-        });
-    },
-    methods: {
-        makeGETRequest() {
-            let xhr = new XMLHttpRequest();
-            return new Promise((resolve, reject) => {
-                xhr.open('GET', `${this.API_URL}products/data.json`, 'true');
-                xhr.send(null);
+    // Отслеживаем добавление товара в корзину, и отправляем данные на сервер
+    eventBus.$on('server-item-add', (cartItem) => {
+      this.makePOSTRequest('addToCart', cartItem)
+        .then((response) => {
+          this.cartItems = response;
+          eventBus.$emit('total-price-calculate');
+        }).catch((message) => {
+          console.error(message);
+        })
+    });
 
-                xhr.onload = function () {
-                    if (xhr.status !== 200) {
-                        reject(`Не удалось получить объект с товарами: функция makeGETRequest вернула статус ${xhr.status}`);
-                    } else {
-                        resolve(JSON.parse(xhr.responseText));
-                    }
-                }
-            });
-        },
+    // Отслеживаем удаление товара из корзины, и отправляем данные на сервер
+    eventBus.$on('remove-item', (cartItem) => {
+      this.makePOSTRequest('removeItem', cartItem)
+        .then((response) => {
+          this.cartItems = response;
+          eventBus.$emit('total-price-calculate');
+        }).catch((message) => {
+          console.error(message);
+        })
+    });
+
+    // Событие фильтрации товаров через поиск
+    eventBus.$on('filter-goods', (value) => {
+      const regexp = new RegExp(value, 'i');
+      this.filteredGoods = this.goods.filter((good) => regexp.test(good.title));
+    });
+  },
+  methods: {
+    makeGETRequest(url) {
+      let xhr = new XMLHttpRequest();
+      return new Promise((resolve, reject) => {
+        xhr.open('GET', url, 'true');
+        xhr.send(null);
+
+        xhr.onload = function () {
+          if (xhr.status !== 200) {
+            reject(
+              `Не удалось получить объект с товарами: функция makeGETRequest вернула статус ${xhr.status}`
+            );
+          } else {
+            resolve(JSON.parse(xhr.responseText));
+          }
+        };
+      });
     },
-    template: `
+    makePOSTRequest(url, data) {
+      let xhr = new XMLHttpRequest();
+
+      return new Promise((resolve, reject) => {
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        xhr.send(JSON.stringify(data));
+
+        xhr.onload = function () {
+          if (xhr.status !== 200) {
+            reject(
+              `Не удалось получить объект с товарами: функция makeGETRequest вернула статус ${xhr.status}`
+            );
+          } else {
+            resolve(JSON.parse(xhr.responseText));
+          }
+        };
+      });
+    }
+  },
+  template: `
         <main class="container">
             <div class="row is-grid flex-middle flex-between">
                 <div class="cell-12 cell-12-sm transition text-center">
                     <shop-goods-list :filtered-goods="filteredGoods" :cart-items="cartItems"></shop-goods-list v-if="filteredGoods.length !== 0">
                 </div>
             </div>
-            <shop-cart-list :cart-items="cartItems"></shop-cart-list>
+            <shop-cart-list :cart-items="cartItems" :totalPrice="totalPrice"></shop-cart-list>
             <shop-goods-search></shop-goods-search>
             <shop-feed-back></shop-feed-back>
         </main>
     `,
-}
+};
 
 let shopFooter = {
-    template: `
+  template: `
         <footer class="pallette_2 p-t-50">
             <div class="container">
                 <div class="row is-grid text-center">
@@ -784,20 +850,17 @@ let shopFooter = {
                 </div>
             </div>
         </footer>
-    `
-}
+    `,
+};
 
 // Создаём шину событий, чтобы передавать данные между компонентами
 const eventBus = new Vue({});
 
 const shop = new Vue({
-    components: {
-        'shop-main': shopMain,
-        'shop-header': shopHeader,
-        'shop-footer': shopFooter
-    },
-    el: '#shop',
-    data: {},
-    methods: {},
-    mounted() {},
+  components: {
+    'shop-main': shopMain,
+    'shop-header': shopHeader,
+    'shop-footer': shopFooter,
+  },
+  el: '#shop',
 });

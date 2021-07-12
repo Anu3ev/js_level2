@@ -1,0 +1,14 @@
+{
+  "name": "js_course2",
+  "version": "0.0.1",
+  "description": "JS COURSE",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "alexander.anufriev@insales.ru",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
