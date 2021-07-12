@@ -331,7 +331,7 @@ let shopCartList = {
       this.cartItems.forEach((item, i) => {
         if (cartItem.id === item.id) {
           // Отправляем cartItem в shopMain для удаления товара из корзины на сервере
-          eventBus.$emit('remove-item', (cartItem));
+          eventBus.$emit('server-remove-item', (cartItem));
         }
       });
     });
@@ -711,7 +711,7 @@ let shopMain = {
     });
 
     // Отслеживаем удаление товара из корзины, и отправляем данные на сервер
-    eventBus.$on('remove-item', (cartItem) => {
+    eventBus.$on('server-remove-item', (cartItem) => {
       this.makePOSTRequest('removeItem', cartItem)
         .then((response) => {
           this.cartItems = response;
