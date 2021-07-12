@@ -93,9 +93,11 @@ app.post('/addToCart', (req, res) => {
 
       // Записываем действия покупателя в файл stats.json
       fs.readFile('stats.json', 'utf8', (err, data) => {
-        const stats = JSON.parse(data);
-        stats.push(action);
-        fs.writeFile('stats.json', JSON.stringify(stats), (err) => {});
+        if (!err) {
+          const stats = JSON.parse(data);
+          stats.push(action);
+          fs.writeFile('stats.json', JSON.stringify(stats), (err) => {});
+        }
       });
 
       fs.writeFile('cart.json', JSON.stringify(cart), (err) => {
